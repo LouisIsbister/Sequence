@@ -36,27 +36,30 @@ public class Sequence<T> {
 
     public static void main(String[] args) {
         // expect 2049
-        Sequence.of(2024)
+        assert Sequence.of(2024)
                 .map(e -> e + 25)
-                .ifPresent(System.out::println);
+                .obtain() 
+                == 2049;
 
         // expect 0x1.f412p21
-        String res = Sequence.of(2024)
+        assert Sequence.of(2024)
                 .map(e -> e * e)
                 .map(e -> Double.toHexString(e))
-                .obtain();
-        System.out.println(res);        
+                .obtain()
+                .equals("0x1.f412p21");
 
         // expect 15.0
-        SequenceCollection.of(List.of(1, 2, 3, 4, 5))
+        assert SequenceCollection.of(List.of(1, 2, 3, 4, 5))
                 .reduce(0.0, (a, b) -> a + b)
-                .ifPresent(System.out::println);
+                .obtain() 
+                == 15;
 
         // expect 55
-        SequenceCollection.of(List.of("1", "2", "3", "4", "5"))
+        assert SequenceCollection.of(List.of("1", "2", "3", "4", "5"))
                 .map(Integer::parseInt)
                 .map(e -> e * e)
                 .reduce(0, (a, b) -> a + b)
-                .ifPresent(System.out::println);
+                .orElse(0) 
+                == 55;
     }
 }

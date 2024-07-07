@@ -30,16 +30,16 @@ public class SequenceCollection<T> extends Sequence<T> {
 
     @Override
     public <R> SequenceCollection<R> map(Function<T, R> f) {
-        Collection<R> newCol = getNewCollection(input);
+        Collection<R> mapped = getNewCollection(input);
 
         @SuppressWarnings("unchecked")
         T[] arr = (T[]) input.toArray();
         
         for (T item : arr) {
-            newCol.add(f.apply(item));
+            mapped.add(f.apply(item));
         }
 
-        return new SequenceCollection<R>(newCol);
+        return new SequenceCollection<R>(mapped);
     }
 
     @SuppressWarnings("unchecked")
