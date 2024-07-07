@@ -1,12 +1,14 @@
 package src;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Set;
+import java.util.HashSet;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class SequenceCollection<T> extends Sequence<T> {
 
@@ -29,30 +31,24 @@ public class SequenceCollection<T> extends Sequence<T> {
         return new Sequence<>(result);
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
     public <R> SequenceCollection<R> map(Function<T, R> f) {
-        Collection<R> mapped = getNewCollection(input);
+        Supplier<Collection<R>> s = () -> {
+            try {
+                return input.getClass().getConstructor().newInstance();
+            } catch (Exception e) {
+                if (input instanceof List) return new ArrayList<>();
+                if (input instanceof Set) return new HashSet<>();
+                // TODO: add mapping of maps functionality
+                throw new UnsupportedOperationException("Unable to create a new instance of the collection: " + input.getClass(), e);
+            }
+        };
 
-        @SuppressWarnings("unchecked")
-        T[] arr = (T[]) input.toArray();
-        
-        for (T item : arr) {
-            mapped.add(f.apply(item));
-        }
+        Collection<R> mapped = input.stream()
+                .map(e -> f.apply(e))
+                .collect(Collectors.toCollection(s));
 
         return new SequenceCollection<R>(mapped);
-    }
-
-    @SuppressWarnings("unchecked")
-    private <R> Collection<R> getNewCollection(Collection<T> input) {
-        if (input instanceof List) return new ArrayList<>();
-        if (input instanceof Set) return new HashSet<>();
-        try {
-            return (Collection<R>) input.getClass().getDeclaredConstructor().newInstance();
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new UnsupportedOperationException("Unable to create a new instance of the collection: " + input.getClass(), e);
-        }
     }
     
 }
