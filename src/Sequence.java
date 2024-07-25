@@ -1,5 +1,7 @@
 package src;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -56,13 +58,13 @@ public class Sequence<T> {
                 == 15;
 
         // expect 55
-        assert SequenceCollection.of(List.of("1", "2", "3", "4", "5"))
+        List<String> list = new ArrayList<>();
+        list.addAll(Arrays.asList("1", "2", "3", "4", "5"));
+        assert SequenceCollection.of(list)
                 .map(Integer::parseInt)
                 .map(e -> e * e)
                 .reduce(0, (a, b) -> a + b)
                 .orElse(0) 
                 == 55;
-        
-        System.out.println("SUCCESS");
     }
 }

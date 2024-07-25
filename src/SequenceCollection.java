@@ -36,7 +36,8 @@ public class SequenceCollection<T> extends Sequence<T> {
         Supplier<Collection<R>> s = () -> {
             try {
                 return input.getClass().getConstructor().newInstance();
-            } catch (Exception e) {
+            } catch (Exception e) {    // catches instantiation error of immutable collections
+                e.printStackTrace();
                 if (input instanceof List) return new ArrayList<>();
                 if (input instanceof Set) return new HashSet<>();
                 // TODO: add mapping of maps functionality
