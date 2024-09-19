@@ -1,55 +1,18 @@
 package src;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.ArrayList;
-import java.util.Set;
-import java.util.HashSet;
+import java.util.Map;
 import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
-public class SequenceCollection<T> extends Sequence<T> {
+public interface SequenceCollection<T> {
 
-    Collection<T> input;
+    public abstract <R> SequenceItem<R> reduce(R identity, BiFunction<R, ? super T, R> f);
 
-    public SequenceCollection(Collection<T> input) {
-        super();
-        this.input = input;
+    static <K, V> SequenceMap<K, V> of(Map<K, V> m) {
+        return new SequenceMap<>(m);
+    }
+    static <E> SequenceList<E> of(List<E> l) {
+        return new SequenceList<>(l);
     }
 
-    static <R> SequenceCollection<R> of(Collection<R> col) {
-        return new SequenceCollection<>(col);
-    }
-
-    public <R> Sequence<R> reduce(R identity, BiFunction<R, ? super T, R> f) {
-        R result = identity;
-        for (T item : input) {
-            result = f.apply(result, item);
-        }
-        return new Sequence<>(result);
-    }
-
-    @SuppressWarnings("unchecked")
-    public <R> SequenceCollection<R> map(Function<T, R> f) {
-        Supplier<Collection<R>> s = () -> {
-            try {
-                return input.getClass().getConstructor().newInstance();
-            } catch (Exception e) {    // catches instantiation error of immutable collections
-                e.printStackTrace();
-                if (input instanceof List) return new ArrayList<>();
-                if (input instanceof Set) return new HashSet<>();
-                // TODO: add mapping of maps functionality
-                throw new UnsupportedOperationException("Unable to create a new instance of the collection: " + input.getClass(), e);
-            }
-        };
-
-        Collection<R> mapped = input.stream()
-                .map(e -> f.apply(e))
-                .collect(Collectors.toCollection(s));
-
-        return new SequenceCollection<R>(mapped);
-    }
-    
 }

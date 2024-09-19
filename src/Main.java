@@ -2,50 +2,21 @@ package src;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Function;
+import java.util.Map;
 
-public class Sequence<T> {
-    private T input;
-
-    public Sequence() {}
-
-    public Sequence(T input) {
-        this.input = input;
-    }
-
-    public static <R> Sequence<R> of(R t) {
-        return new Sequence<R>(t);
-    }
-
-    public <R> Sequence<R> map(Function<T, R> f) {
-        return new Sequence<R>(f.apply(input));
-    }
-
-    public void ifPresent(Consumer<T> c) {
-        if (input != null) {
-            c.accept(input);
-        }
-    }
-
-    public T orElse(T other) {
-        return input != null ? input : other;
-    }
-
-    public T obtain() {
-        return input;
-    }
-
+public class Main {
+    
     public static void main(String[] args) {
         // expect 2049
-        assert Sequence.of(2024)
+        assert SequenceItem.of(2024)
                 .map(e -> e + 25)
                 .obtain() 
                 == 2049;
 
         // expect 0x1.f412p21
-        assert Sequence.of(2024)
+        assert SequenceItem.of(2024)
                 .map(e -> e * e)
                 .map(e -> Double.toHexString(e))
                 .obtain()
@@ -66,5 +37,14 @@ public class Sequence<T> {
                 .reduce(0, (a, b) -> a + b)
                 .orElse(0) 
                 == 55;
+
+        // expect 55
+        Map<String, Integer> map = new HashMap<>();
+        map.putAll(Map.of("a", 1, "b", 2, "c", 3, "d", 4));
+        assert SequenceCollection.of(map)
+                .mapValues(e -> e * 2)
+                .reduce(0, (a, b) -> a + b)
+                .orElse(0) 
+                == 20;
     }
 }
