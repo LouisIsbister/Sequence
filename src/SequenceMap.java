@@ -7,7 +7,8 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class SequenceMap<K, V> implements SequenceCollection<V> {
+@SuppressWarnings("rawtypes")
+public class SequenceMap<K, V> extends SequenceItem {
 
     Map<K, V> input;
 
@@ -31,6 +32,7 @@ public class SequenceMap<K, V> implements SequenceCollection<V> {
                 return input.getClass().getConstructor().newInstance();
             } catch (Exception e) {
                 e.printStackTrace();
+                // default map type if given an immutable map
                 return new HashMap<>();
             }
         };
@@ -43,14 +45,28 @@ public class SequenceMap<K, V> implements SequenceCollection<V> {
         return new SequenceMap<>(ret);
     }
 
-    @Override
-    public <R> SequenceItem<R> reduce(R identity, BiFunction<R, ? super V, R> f) {
-        R result = identity;
-        for (V item : input.values()) {
-            result = f.apply(result, item);
-        }
-        return new SequenceItem<R>(result);
+    /**
+     * Return the reduced version of the maps keyset
+     * 
+     * @param <R> return type
+     * @param identity initial value of the accumlator
+     * @param f bifunction to perform reduction 
+     * @return the reduced keyset
+     */
+    public <R> SequenceItem<R> reduceKeys(R identity, BiFunction<R, ? super K, R> f) {
+        return SequenceItem.<R, K>reducer(identity, f, input.keySet());
     }
 
-    
+    /**
+     * Return the reduced version of the maps values
+     * 
+     * @param <R> return type
+     * @param identity initial value of the accumlator
+     * @param f bifunction to perform reduction 
+     * @return the reduced collection of values
+     */
+    public <R> SequenceItem<R> reduceValues(R identity, BiFunction<R, ? super V, R> f) {
+        return SequenceItem.<R, V>reducer(identity, f, input.values());
+    }
+
 }

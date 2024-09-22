@@ -6,7 +6,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class SequenceList<T> implements SequenceCollection<T> {
+public class SequenceList<T> extends SequenceItem<T> {
     
     List<T> input;
 
@@ -14,7 +14,9 @@ public class SequenceList<T> implements SequenceCollection<T> {
         this.input = input;
     }
 
-    @SuppressWarnings("unchecked")
+   
+    @SuppressWarnings("unchecked") 
+    @Override
     public <R> SequenceList<R> map(Function<T, R> f) {
         Supplier<List<R>> s = () -> {
             try {
@@ -33,13 +35,8 @@ public class SequenceList<T> implements SequenceCollection<T> {
         return new SequenceList<>(ret);
     }
 
-    @Override
     public <R> SequenceItem<R> reduce(R identity, BiFunction<R, ? super T, R> f) {
-        R result = identity;
-        for (T item : input) {
-            result = f.apply(result, item);
-        }
-        return new SequenceItem<R>(result);
+        return SequenceItem.<R, T>reducer(identity, f, input);
     }
     
 }
