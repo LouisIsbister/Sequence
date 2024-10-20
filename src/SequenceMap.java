@@ -7,8 +7,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-@SuppressWarnings("rawtypes")
-public class SequenceMap<K, V> extends SequenceItem {
+public class SequenceMap<K, V> extends SequenceItem<K> {
 
     Map<K, V> input;
 

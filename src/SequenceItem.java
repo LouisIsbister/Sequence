@@ -20,6 +20,14 @@ public class SequenceItem<T> {
         return new SequenceItem<R>(t);
     }
 
+    public static <K, V> SequenceMap<K, V> of(Map<K, V> m) {
+        return new SequenceMap<>(m);
+    }
+
+    public static <E> SequenceList<E> of(List<E> l) {
+        return new SequenceList<>(l);
+    }
+
     public <R> SequenceItem<R> map(Function<T, R> f) {
         return new SequenceItem<R>(f.apply(input));
     }
@@ -36,13 +44,6 @@ public class SequenceItem<T> {
 
     public T obtain() {
         return input;
-    }
-
-    static <K, V> SequenceMap<K, V> of(Map<K, V> m) {
-        return new SequenceMap<>(m);
-    }
-    static <E> SequenceList<E> of(List<E> l) {
-        return new SequenceList<>(l);
     }
 
     /**

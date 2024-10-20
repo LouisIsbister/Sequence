@@ -50,5 +50,10 @@ public class Main {
                 .reduceKeys("", (a, b) -> a + b)
                 .orElse("FAILURE") 
                 .equals("abcd");
+
+        assert SequenceItem.of(Map.of())
+                .map(e -> null)
+                .orElse("?????") 
+                .equals("?????");
     }
 }
